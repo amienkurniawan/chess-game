@@ -1,0 +1,23 @@
+on: 
+  push:
+    branches:
+      - master
+name: deploy website on push
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: get latest code
+      uses: actions/checkout@v2
+      
+    - name: Sync Files
+      uses: SamKirkland/FTP-Deploy-Action@4.3.0
+      with:
+        server: novara.id.domainesia.com
+        username: ${{secrets.ftp_username}}
+        password: ${{secrets.ftp_password}}
+        server-dir: /public/
+        exclude: |
+          **/.git*
