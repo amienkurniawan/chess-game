@@ -42,9 +42,6 @@ for (let xindex = 0; xindex <= 7; xindex++) {
   )
 }
 
-
-
-
 export default function Chessboard() {
   let board = [];
   for (let j = VerticalAxis.length - 1; j >= 0; j--) {
@@ -58,7 +55,8 @@ export default function Chessboard() {
           image = p.image
         }
       })
-      board.push(<Tile image={image} number={number} />)
+      board.push(<Tile key={`${i},${j}`} image={image} number={number} />)
+
     }
   }
   return <div id='chessboard'>{board}</div>
