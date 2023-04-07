@@ -2,6 +2,7 @@ import './Chessboard.css';
 
 import { useEffect, useRef, useState } from 'react';
 
+import Referee from '../Referee/Referee';
 import Tile from '../Tile/Tile';
 
 const HorizontalAxis = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
@@ -50,6 +51,7 @@ for (let xindex = 0; xindex <= 7; xindex++) {
 
 
 export default function Chessboard() {
+  const referee = new Referee();
 
   let chessboardRef = useRef<HTMLDivElement>(null);
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
@@ -113,8 +115,6 @@ export default function Chessboard() {
       } else {
         activePiece.style.top = `${y}px`;
       }
-
-
     }
 
   }
@@ -123,6 +123,9 @@ export default function Chessboard() {
     const chessboard = chessboardRef.current;
 
     if (activePiece && chessboard) {
+      // checking move
+      referee.isValidMove();
+      // Update Position piece
       setPieces((value) => {
         let x = Math.floor((e.clientX - chessboard.offsetLeft) / 100);
         let y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100));
