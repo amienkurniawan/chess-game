@@ -1,6 +1,6 @@
 import './Chessboard.css';
 
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 import Referee from '../Referee/Referee';
 import Tile from '../Tile/Tile';
@@ -12,40 +12,55 @@ interface Piece {
   image: string;
   x: number;
   y: number;
+  type: pieceType;
+  team: pieceTeam;
 }
 
+export enum pieceType {
+  Pawn,
+  Bishop,
+  Knight,
+  Rook,
+  Queen,
+  King
+}
 
+export enum pieceTeam {
+  Opponent,
+  Our
+}
 
-let activePiece: HTMLElement | null = null;
 const initialBoardState: Piece[] = [];
 
-// black
+// Black Tile
 for (let xindex = 0; xindex <= 7; xindex++) {
   initialBoardState.push(
-    { image: 'assets/images/pawn_b.png', x: xindex, y: 6 },
+    { image: 'assets/images/pawn_b.png', x: xindex, y: 6, type: pieceType.Pawn, team: pieceTeam.Opponent },
   )
 }
 
+// White Tile
+for (let xindex = 0; xindex <= 7; xindex++) {
+  initialBoardState.push(
+    { image: 'assets/images/pawn_w.png', x: xindex, y: 1, type: pieceType.Pawn, team: pieceTeam.Our }
+  )
+}
+
+// Other Tile
 for (let position = 0; position < 2; position++) {
-  let type = position === 0 ? 'b' : 'w';
+  const teamType = (position === 0) ? pieceTeam.Opponent : pieceTeam.Our;
+  let type = (teamType === pieceTeam.Opponent) ? 'b' : 'w';
   let y = position === 0 ? 7 : 0;
 
   initialBoardState.push(
-    { image: `assets/images/rook_${type}.png`, x: 0, y },
-    { image: `assets/images/knight_${type}.png`, x: 1, y },
-    { image: `assets/images/bishop_${type}.png`, x: 2, y },
-    { image: `assets/images/queen_${type}.png`, x: 3, y },
-    { image: `assets/images/king_${type}.png`, x: 4, y },
-    { image: `assets/images/bishop_${type}.png`, x: 5, y },
-    { image: `assets/images/knight_${type}.png`, x: 6, y },
-    { image: `assets/images/rook_${type}.png`, x: 7, y },
-  )
-}
-
-// white
-for (let xindex = 0; xindex <= 7; xindex++) {
-  initialBoardState.push(
-    { image: 'assets/images/pawn_w.png', x: xindex, y: 1 }
+    { image: `assets/images/rook_${type}.png`, x: 0, y, type: pieceType.Rook, team: teamType },
+    { image: `assets/images/knight_${type}.png`, x: 1, y, type: pieceType.Knight, team: teamType },
+    { image: `assets/images/bishop_${type}.png`, x: 2, y, type: pieceType.Bishop, team: teamType },
+    { image: `assets/images/queen_${type}.png`, x: 3, y, type: pieceType.Queen, team: teamType },
+    { image: `assets/images/king_${type}.png`, x: 4, y, type: pieceType.King, team: teamType },
+    { image: `assets/images/bishop_${type}.png`, x: 5, y, type: pieceType.Bishop, team: teamType },
+    { image: `assets/images/knight_${type}.png`, x: 6, y, type: pieceType.Knight, team: teamType },
+    { image: `assets/images/rook_${type}.png`, x: 7, y, type: pieceType.Rook, team: teamType },
   )
 }
 
@@ -123,17 +138,26 @@ export default function Chessboard() {
     const chessboard = chessboardRef.current;
 
     if (activePiece && chessboard) {
-      // checking move
-      referee.isValidMove();
+      let x = Math.floor((e.clientX - chessboard.offsetLeft) / 100);
+      let y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100));
+
+
       // Update Position piece
       setPieces((value) => {
-        let x = Math.floor((e.clientX - chessboard.offsetLeft) / 100);
-        let y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100));
 
         const pieces = value.map((p) => {
           if (p.x === gridX && p.y === gridY) {
-            p.x = x;
-            p.y = y;
+
+            // checking move
+            const validMove = referee.isValidMove(gridY, gridX, y, x, p.type, p.team);
+            if (validMove) {
+              p.x = x;
+              p.y = y;
+            } else {
+              activePiece.style.position = "relative";
+              activePiece.style.removeProperty('top');
+              activePiece.style.removeProperty('left')
+            }
           }
           return p;
         });
