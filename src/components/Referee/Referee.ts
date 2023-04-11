@@ -19,57 +19,104 @@ export default class Referee {
     console.log(`Type Team:(${team})`)
     console.log('Board State : (', boardState, ')')
 
+    // REFACTORING
+
     if (type === pieceType.Pawn) {
-      if (team === pieceTeam.Our) {
-        if (prevY === 1) {
+      const specialRow = (team === pieceTeam.Our) ? 1 : 6;
+      const pawnDirection = (team === pieceTeam.Our) ? 1 : -1;
 
-          if (prevX === currX && (currY - prevY) === 2) {
-            if (!this.isOccupied(currY, currX, boardState) && !this.isOccupied(currY - 1, currX, boardState)) {
-              console.log("valid move!")
-              return true;
-            }
-          }
-
-          if (prevX === currX && (currY - prevY) === 1) {
-            if (!this.isOccupied(currY, currX, boardState)) {
-              console.log("valid move!")
-              return true;
-            }
-          }
-        } else {
-          if (prevX === currX && ((currY - prevY) === 1)) {
-            if (!this.isOccupied(currY, currX, boardState)) {
-              console.log("valid move!")
-              return true;
-            }
-          }
+      if (prevX === currX && prevY === specialRow && currY - prevY === 2 * pawnDirection) {
+        if (!this.isOccupied(currY, currX, boardState) && !this.isOccupied(currY - pawnDirection, currX, boardState)) {
+          console.log("valid move!")
+          return true;
         }
-      } else {
-        if (prevY === 6) {
-
-          if (prevX === currX && (currY - prevY) === -1) {
-            if (!this.isOccupied(currY, currX, boardState)) {
-              console.log("valid move~!")
-              return true;
-            }
-          }
-
-          if (prevX === currX && (currY - prevY) === -2) {
-            if (!this.isOccupied(currY, currX, boardState) && !this.isOccupied(currY + 1, currX, boardState)) {
-              console.log("valid move~!")
-              return true;
-            }
-          }
-        } else {
-          if (prevX === currX && ((currY - prevY) === -1)) {
-            if (!this.isOccupied(currY, currX, boardState)) {
-              console.log("valid move~!")
-              return true;
-            }
-          }
+      } else if (prevX === currX && currY - prevY === pawnDirection) {
+        if (!this.isOccupied(currY, currX, boardState)) {
+          console.log("valid move!")
+          return true;
         }
       }
     }
+
+
+    // if (type === pieceType.Pawn) {
+    //   const specialRow = (team === pieceTeam.Our) ? 1 : 6;
+    //   const pawnDirection = (team === pieceTeam.Our) ? 1 : -1;
+
+    //   if (prevY === specialRow) {
+    //     if (prevX === currX && currY - prevY === pawnDirection) {
+    //       if (!this.isOccupied(currY, currX, boardState)) {
+    //         console.log("valid move!")
+    //         return true;
+    //       }
+    //     } else if (prevX === currX && currY - prevY === 2 * pawnDirection) {
+    //       if (!this.isOccupied(currY, currX, boardState) && !this.isOccupied(currY - pawnDirection, currX, boardState)) {
+    //         console.log("valid move!")
+    //         return true;
+    //       }
+    //     }
+    //   } else {
+    //     if (prevX === currX && currY - prevY === pawnDirection) {
+    //       if (!this.isOccupied(currY, currX, boardState)) {
+    //         console.log("valid move~!")
+    //         return true;
+    //       }
+    //     }
+    //   }
+    // }
+
+
+    // if (type === pieceType.Pawn) {
+    //   if (team === pieceTeam.Our) {
+    //     if (prevY === 1) {
+
+    //       if (prevX === currX && (currY - prevY) === 2) {
+    //         if (!this.isOccupied(currY, currX, boardState) && !this.isOccupied(currY - 1, currX, boardState)) {
+    //           console.log("valid move!")
+    //           return true;
+    //         }
+    //       }
+
+    //       if (prevX === currX && (currY - prevY) === 1) {
+    //         if (!this.isOccupied(currY, currX, boardState)) {
+    //           console.log("valid move!")
+    //           return true;
+    //         }
+    //       }
+    //     } else {
+    //       if (prevX === currX && ((currY - prevY) === 1)) {
+    //         if (!this.isOccupied(currY, currX, boardState)) {
+    //           console.log("valid move!")
+    //           return true;
+    //         }
+    //       }
+    //     }
+    //   } else {
+    //     if (prevY === 6) {
+
+    //       if (prevX === currX && (currY - prevY) === -1) {
+    //         if (!this.isOccupied(currY, currX, boardState)) {
+    //           console.log("valid move~!")
+    //           return true;
+    //         }
+    //       }
+
+    //       if (prevX === currX && (currY - prevY) === -2) {
+    //         if (!this.isOccupied(currY, currX, boardState) && !this.isOccupied(currY + 1, currX, boardState)) {
+    //           console.log("valid move~!")
+    //           return true;
+    //         }
+    //       }
+    //     } else {
+    //       if (prevX === currX && ((currY - prevY) === -1)) {
+    //         if (!this.isOccupied(currY, currX, boardState)) {
+    //           console.log("valid move~!")
+    //           return true;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
     return false;
   }
 }
