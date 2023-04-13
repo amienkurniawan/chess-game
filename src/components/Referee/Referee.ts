@@ -53,12 +53,14 @@ export default class Referee {
         console.log('upper or bottom left')
         if (this.tileIsOccupiedByOpponent(currX, currY, boardState, team)) {
           console.log('we can attact the enemy!')
+          return true;
         }
       } else if (currX - prevX === 1 && currY - prevY === pawnDirection) {
         // Attack in upper or Bottom Right Corner
         console.log('upper or bottom right')
         if (this.tileIsOccupiedByOpponent(currX, currY, boardState, team)) {
           console.log('we can attact the enemy!')
+          return true;
         }
       }
     }
