@@ -70,9 +70,9 @@ export default function Chessboard() {
 
   let chessboardRef = useRef<HTMLDivElement>(null);
   const [activePiece, setActivePiece] = useState<HTMLElement | null>(null);
-  const [pieces, setPieces] = useState<Piece[]>(initialBoardState);
-  const [gridX, setGridX] = useState(0);
-  const [gridY, setGridY] = useState(0);
+  const [pieces, setPieces] = useState<Piece[]>(initialBoardState); // adalah posisi dari setiap bidak atau pion di dalam papan catur/ chessboard
+  const [gridX, setGridX] = useState(0); // adalah state dari piece/pion yang saat itu sedang digerakkan posisi X
+  const [gridY, setGridY] = useState(0); // adalah state dari piece/pion yang saat itu sedang digerakkan posisi y
 
 
   function grabPiece(e: React.MouseEvent) {
@@ -141,29 +141,35 @@ export default function Chessboard() {
       let x = Math.floor((e.clientX - chessboard.offsetLeft) / 100);
       let y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100));
 
+      const currentPiece = pieces.find(p => p.x === gridX && p.y === gridY); // posisi lokasi ketika pion didrop 
+      const attackedPiece = pieces.find(p => p.x === x && p.y === y);
 
-      // Update Position piece
-      setPieces((value) => {
+      if (currentPiece) {
+        const validMove = referee.isValidMove(gridY, gridX, y, x, currentPiece?.type, currentPiece?.team, pieces)
+        if (validMove) {
+          // UPDATE THE PIECE POSITION
+          // AND IF POSITION IS ATTACK REMOVE PIECE
 
-        const pieces = value.map((p) => {
-          if (p.x === gridX && p.y === gridY) {
 
-            // checking move
-            const validMove = referee.isValidMove(gridY, gridX, y, x, p.type, p.team, value);
-            if (validMove) {
-              p.x = x;
-              p.y = y;
-            } else {
-              activePiece.style.position = "relative";
-              activePiece.style.removeProperty('top');
-              activePiece.style.removeProperty('left')
+          const updatedValue = pieces.reduce((results, piece) => {
+            if (piece.x === currentPiece.x && piece.y === currentPiece.y) {
+              piece.x = x;
+              piece.y = y;
+              results.push(piece);
+            } else if (!(piece.x === x && piece.y === y)) {
+              results.push(piece)
             }
-          }
-          return p;
-        });
-        return pieces;
-      });
+            return results;
+          }, [] as Piece[])
 
+          setPieces(updatedValue);
+        } else {
+          // RESET THE PIECE
+          activePiece.style.position = "relative";
+          activePiece.style.removeProperty('top');
+          activePiece.style.removeProperty('left')
+        }
+      }
       setActivePiece(null);
     }
   }
