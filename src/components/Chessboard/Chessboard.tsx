@@ -82,8 +82,8 @@ export default function Chessboard() {
 
     if (element.classList.contains("chess-piece") && chessboard) {
 
-      setGridX(Math.floor((e.clientX - chessboard.offsetLeft) / 100));
-      setGridY(Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100)));
+      setGridX(Math.floor((e.clientX - chessboard.offsetLeft) / 100)); //  ketika menggambil pion maka akan melakukan update state x dari pion tersebut
+      setGridY(Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100))); // ketika menggambil pion maka akan melakukan update state y dari pion tersebut
 
       const x = e.clientX - 50;
       const y = e.clientY - 50;
@@ -138,21 +138,22 @@ export default function Chessboard() {
     const chessboard = chessboardRef.current;
 
     if (activePiece && chessboard) {
-      let x = Math.floor((e.clientX - chessboard.offsetLeft) / 100);
-      let y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100));
+      let x = Math.floor((e.clientX - chessboard.offsetLeft) / 100); // x adalah posisi axis x dari pion yang sedang bergerak
+      let y = Math.abs(Math.ceil((e.clientY - chessboard.offsetTop - 800) / 100)); // y adalah posisi axis y dari pion yang sedang bergerak
 
       const currentPiece = pieces.find(p => p.x === gridX && p.y === gridY); // posisi lokasi ketika pion didrop 
       const attackedPiece = pieces.find(p => p.x === x && p.y === y);
 
+      // Current Piece X
       if (currentPiece) {
-        const validMove = referee.isValidMove(gridY, gridX, y, x, currentPiece?.type, currentPiece?.team, pieces)
+        const validMove = referee.isValidMove(gridY, gridX, y, x, currentPiece.type, currentPiece.team, pieces)
         if (validMove) {
+
           // UPDATE THE PIECE POSITION
           // AND IF POSITION IS ATTACK REMOVE PIECE
 
-
           const updatedValue = pieces.reduce((results, piece) => {
-            if (piece.x === currentPiece.x && piece.y === currentPiece.y) {
+            if (piece.x === gridX && piece.y === gridY) { // jika pion yang sedang bergerak itu memiliki kondisi yang sama dengan piece nya maka piece akan digantikan posisinya dengan nilai x dan y
               piece.x = x;
               piece.y = y;
               results.push(piece);
